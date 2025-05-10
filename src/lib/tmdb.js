@@ -6,6 +6,16 @@ export async function getPopularMovies() {
     `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=ko-KR&page=1`
   );
   const data = await res.json();
-  console.log("11" + API_KEY);
+  //console.log("test" + API_KEY);
+  return data.results;
+}
+
+export async function searchMovies(query) {
+  const res = await fetch(
+    `${BASE_URL}/search/movie?api_key=${API_KEY}&language=ko-KR&query=${encodeURIComponent(
+      query
+    )}`
+  );
+  const data = await res.json();
   return data.results;
 }
