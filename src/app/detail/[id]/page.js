@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default async function DetailPage({ params }) {
   const res = await fetch(
     `https://api.themoviedb.org/3/movie/${params.id}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&language=ko-KR`
@@ -6,6 +7,20 @@ export default async function DetailPage({ params }) {
 
   return (
     <div style={{ padding: "2erm" }}>
+      <Link href={"/"}>
+        <button
+          style={{
+            float: "right",
+            background: "none",
+            color: "white",
+            fontSize: "1.5rem",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          X
+        </button>
+      </Link>
       <h1>{movie.title}</h1>
       <img
         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
