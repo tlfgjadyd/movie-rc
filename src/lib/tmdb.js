@@ -19,3 +19,19 @@ export async function searchMovies(query) {
   const data = await res.json();
   return data.results;
 }
+
+export async function getGenres() {
+  const res = await fetch(
+    `${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=ko-KR`
+  );
+  const data = await res.json();
+  return data.genres; // 형태 : { id: 28, name: "액션" }, {id:...} 장르의 모음
+}
+
+export async function getMoviesByGenre(genreId) {
+  const res = await fetch(
+    `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=ko-KR&sort_by=popularity.desc&with_genres=${genreId}`
+  );
+  const data = await res.json();
+  return data.results;
+}
