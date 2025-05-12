@@ -20,6 +20,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(20); //500페이지까지 가능하긴 한데 지금은 10으로 고정
   const [startPage, setStartPage] = useState(1);
+  const [selectedGenre, setSelectedGenre] = useState(null);
   // 디바운스를 위한 타이머 ID 저장
   const [timer, setTimer] = useState(null);
 
@@ -54,9 +55,14 @@ export default function Home() {
     const data = await searchMovies(q); //검색어 관련 영화를 movies에
     setMovies(data);
   }
-  async function fetchByGenre(genreId) {
-    const data = await getMoviesByGenre(genreId);
+  async function fetchByGenre(genreId, page = 1) {
+    const data = await getMoviesByGenre(genreId, page);
     setMovies(data);
+    setCurrentPage(page);
+    setSelectedGenre(genreId);
+
+    const newStart = Math.floor((page - 1) / 10) * 10 + 1; //11 - 1 / 10 = 1 * 10 10 + 1  newstart 11
+    setStartPage(newStart);
 
     const genre = genres.find((g) => g.id === genreId);
     if (genre) setGenreName(genre.name);
@@ -66,6 +72,14 @@ export default function Home() {
     const genre = await getGenres();
     setGenres(genre);
   }
+  //w댓네 왜 안돼
+  const handlePageClick = (page) => {
+    if (selectedGenre) {
+      fetchByGenre(selectedGenre, page);
+    } else {
+      fetchPopular(page);
+    }
+  };
 
   // async function handleSearch(e) {
   //   e.preventDefault(); //폼 제출시 새로고침X
@@ -103,6 +117,7 @@ export default function Home() {
             fetchPopular();
             setQuery("");
             setGenreName("");
+            setSelectedGenre(null);
           }}
           style={{
             display: "inline-block",
@@ -170,7 +185,7 @@ export default function Home() {
         isOpen={isMenuOpen} //right
         onClose={() => setIsMenuOpen(false)}
         onSelectGenre={(genreId) => {
-          fetchByGenre(genreId);
+          fetchByGenre(genreId, 1);
           setQuery(""); //검색초기화
           setIsMenuOpen(false);
         }}
@@ -201,7 +216,7 @@ export default function Home() {
             return (
               <button
                 key={pageNum}
-                onClick={() => fetchPopular(pageNum)}
+                onClick={() => handlePageClick(pageNum)}
                 style={{
                   margin: "0 5px",
                   padding: "6px 12px",

@@ -28,9 +28,9 @@ export async function getGenres() {
   return data.genres; // 형태 : { id: 28, name: "액션" }, {id:...} 장르의 모음
 }
 
-export async function getMoviesByGenre(genreId) {
+export async function getMoviesByGenre(genreId, page) {
   const res = await fetch(
-    `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=ko-KR&sort_by=popularity.desc&with_genres=${genreId}`
+    `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=ko-KR&sort_by=popularity.desc&with_genres=${genreId}&page=${page}`
   );
   const data = await res.json();
   return data.results;
