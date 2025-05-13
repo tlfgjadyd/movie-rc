@@ -7,17 +7,23 @@ export async function getPopularMovies(page) {
   );
   const data = await res.json();
   //console.log("test" + API_KEY);
-  return data.results;
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
 }
 
-export async function searchMovies(query) {
+export async function searchMovies(query, page) {
   const res = await fetch(
     `${BASE_URL}/search/movie?api_key=${API_KEY}&language=ko-KR&query=${encodeURIComponent(
       query
-    )}`
+    )}&page=${page}`
   );
   const data = await res.json();
-  return data.results;
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
 }
 
 export async function getGenres() {
@@ -33,5 +39,8 @@ export async function getMoviesByGenre(genreId, page) {
     `${BASE_URL}/discover/movie?api_key=${API_KEY}&language=ko-KR&sort_by=popularity.desc&with_genres=${genreId}&page=${page}`
   );
   const data = await res.json();
-  return data.results;
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
 }
