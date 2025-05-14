@@ -9,6 +9,9 @@ import {
   getGenres,
 } from "../lib/tmdb";
 import GenreMenu from "@/components/GenreMenu";
+import MovieList from "@/components/MovieList";
+import Pagination from "@/components/Pagination";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [movies, setMovies] = useState([]);
@@ -91,59 +94,24 @@ export default function Home() {
   };
 
   return (
+    //리펙토링 하는중
+    //리펙토링 완
     <div style={{ padding: "2rem" }}>
-      {/* Header */}
-      <button
-        onClick={() => setIsMenuOpen(true)}
-        style={{
-          position: "fixed",
-          top: "1rem",
-          right: "1rem",
-          fontSize: "1.5rem",
-        }}
-      >
-        ☰
-      </button>
-      <h1
-        onClick={() => {
+      <Header
+        isMenuOpen={isMenuOpen}
+        onOpenMenu={() => setIsMenuOpen(true)}
+        onTitleClick={() => {
           fetchPopular();
           setQuery("");
+          setGenreName("");
+          setSelectedGenre(null);
         }}
-        style={{ cursor: "pointer" }}
-      >
-        Title
-      </h1>
-
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="영화 제목 검색"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{ padding: "0.5rem", width: "300px", marginBottom: "1rem" }}
+        query={query}
+        setQuery={setQuery}
+        genreName={genreName}
       />
-
-      {/* Title */}
-      <h2 style={{ display: query ? "none" : "block" }}>
-        인기 영화 {genreName && `: ${genreName}`}
-      </h2>
-
       {/* Movies */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-        {movies.map((movie) => (
-          <Link key={movie.id} href={`/detail/${movie.id}`}>
-            <div style={{ width: "200px", cursor: "pointer" }}>
-              <img
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-                style={{ width: "100%", padding: "10px" }}
-              />
-              <h3>{movie.title}</h3>
-            </div>
-          </Link>
-        ))}
-      </div>
-
+      <MovieList movies={movies} />
       {/* Genre Menu */}
       <GenreMenu
         isOpen={isMenuOpen}
@@ -154,41 +122,13 @@ export default function Home() {
           setIsMenuOpen(false);
         }}
       />
-
       {/* Pagination */}
-      <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <button
-          onClick={() => handlePageClick(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          ◀
-        </button>
-        {Array.from(
-          { length: Math.min(10, totalPages - startPage + 1) },
-          (_, i) => {
-            const pageNum = startPage + i;
-            return (
-              <button
-                key={pageNum}
-                onClick={() => handlePageClick(pageNum)}
-                style={{
-                  backgroundColor: currentPage === pageNum ? "#0070f3" : "#eee",
-                  color: currentPage === pageNum ? "#fff" : "#000",
-                  margin: "0 5px",
-                }}
-              >
-                {pageNum}
-              </button>
-            );
-          }
-        )}
-        <button
-          onClick={() => handlePageClick(currentPage + 1)}
-          disabled={currentPage >= totalPages}
-        >
-          ▶
-        </button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        startPage={startPage}
+        onPageClick={handlePageClick}
+      />
     </div>
   );
 }
