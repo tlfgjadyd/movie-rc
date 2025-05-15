@@ -1,4 +1,6 @@
 "use client";
+import "react-datepicker/dist/react-datepicker.css";
+import DateRangePicker from "./DateRangePicker";
 
 export default function Header({
   isMenuOpen,
@@ -8,6 +10,9 @@ export default function Header({
   setQuery,
   genreName,
 }) {
+  function handleDateRangeChange(params) {
+    return;
+  }
   return (
     <div style={{ padding: "2rem" }}>
       {/* Header */}
@@ -36,18 +41,22 @@ export default function Header({
       </h1>
       <hr />
       {/* Search */}
-      <input
-        type="text"
-        placeholder="영화 제목 검색"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        style={{
-          padding: "0.5rem",
-          width: "300px",
-          marginTop: "1rem",
-          marginBottom: "1rem",
-        }}
-      />
+      <div>
+        <input
+          type="text"
+          placeholder="영화 제목 검색"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{
+            padding: "0.5rem",
+            width: "300px",
+            marginTop: "1rem",
+            marginBottom: "1rem",
+          }}
+        />
+        {/* Search for Date */}
+        <DateRangePicker onDateRangeChange={handleDateRangeChange} />
+      </div>
       {/* Title */}
       <h2 style={{ display: query ? "none" : "block" }}>
         인기 영화 {genreName && `: ${genreName}`}

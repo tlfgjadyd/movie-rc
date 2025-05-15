@@ -123,12 +123,15 @@ export default function Home() {
         }}
       />
       {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        startPage={startPage}
-        onPageClick={handlePageClick}
-      />
+      <div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          startPage={startPage}
+          onPageClick={handlePageClick}
+        />
+      </div>
     </div>
   );
 }
+// 정렬 옵션?

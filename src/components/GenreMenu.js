@@ -39,6 +39,7 @@ export default function GenreMenu({ isOpen, onClose, onSelectGenre }) {
           color: "white",
           fontSize: "1.5rem",
           border: "none",
+          cursor: "pointer",
         }}
       >
         X
