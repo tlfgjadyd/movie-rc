@@ -3,16 +3,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import DateRangePicker from "./DateRangePicker";
 
 export default function Header({
-  isMenuOpen,
   onOpenMenu,
   onTitleClick,
   query,
   setQuery,
   genreName,
+  handleDateRangeChange,
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
 }) {
-  function handleDateRangeChange(params) {
-    return;
-  }
   return (
     <div style={{ padding: "2rem" }}>
       {/* Header */}
@@ -55,7 +56,13 @@ export default function Header({
           }}
         />
         {/* Search for Date */}
-        <DateRangePicker onDateRangeChange={handleDateRangeChange} />
+        <DateRangePicker
+          onDateRangeChange={handleDateRangeChange}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+        />
       </div>
       {/* Title */}
       <h2 style={{ display: query ? "none" : "block" }}>

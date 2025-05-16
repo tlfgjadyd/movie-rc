@@ -44,3 +44,31 @@ export async function getMoviesByGenre(genreId, page) {
     total_pages: data.total_pages,
   };
 }
+// 그냥 장르 없을 때
+export async function getMoviesByDateRange(startStr, endStr, page) {
+  const res = await fetch(
+    `${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_date.gte=${startStr}&language=ko-KR&sort_by=popularity.desc&primary_release_date.lte=${endStr}&page=${page}`
+  );
+  const data = await res.json();
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
+}
+
+// 장르도 있을 때
+export async function getMoviesByDateRangeWithGenre(
+  startStr,
+  endStr,
+  page,
+  genreId
+) {
+  const res = await fetch(
+    `${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_date.gte=${startStr}&language=ko-KR&sort_by=popularity.desc&primary_release_date.lte=${endStr}&page=${page}&with_genres=${genreId}`
+  );
+  const data = await res.json();
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
+}

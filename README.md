@@ -68,3 +68,5 @@ https://api.themoviedb.org/3/movie/{movie_id}/recommendations?api_key=YOUR_API_K
 이용해서 추천하기
 slice(0,5) 이용해서 자르기
 ```
+
+추후 장르별 체크박스로 만들어서 여러개 하기

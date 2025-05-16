@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   getPopularMovies,
   searchMovies,
   getMoviesByGenre,
   getGenres,
+  getMoviesByDateRange,
+  getMoviesByDateRangeWithGenre,
 } from "../lib/tmdb";
 import GenreMenu from "@/components/GenreMenu";
 import MovieList from "@/components/MovieList";
@@ -24,6 +26,8 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(20);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [timer, setTimer] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
     fetchGenres();
@@ -81,30 +85,62 @@ export default function Home() {
     if (genre) setGenreName(genre.name);
   }
 
-  const handlePageClick = (page) => {
+  // 1
+  async function handlePageClick(page) {
     if (query.trim()) {
       fetchSearch(query, page);
-      // console.log("됨");
-      // console.log(page);
+    } else if (startDate && endDate) {
+      await fetchByDateRangeAndGenre(startDate, endDate, page, selectedGenre);
     } else if (selectedGenre) {
       fetchByGenre(selectedGenre, page);
     } else {
       fetchPopular(page);
     }
-  };
+  }
+  async function fetchByDateRangeAndGenre(startDate, endDate, page, genreId) {
+    const startStr = startDate.toISOString().split("T")[0];
+    const endStr = endDate.toISOString().split("T")[0];
+    let data;
+    if (genreId) {
+      data = await getMoviesByDateRangeWithGenre(
+        startStr,
+        endStr,
+        page,
+        genreId
+      );
+    } else {
+      data = await getMoviesByDateRange(startStr, endStr, page);
+    }
+    setMovies(data.results);
+    setTotalPages(data.total_pages);
+    updatePageData(page);
+  }
 
+  async function handleDateRangeChange({ start, end }) {
+    setStartDate(start);
+    setEndDate(end);
+    fetchByDateRangeAndGenre(start, end, currentPage, selectedGenre);
+  }
   return (
     //리펙토링 하는중
     //리펙토링 완
     <div style={{ padding: "2rem" }}>
       <Header
+        selectedGenre={selectedGenre}
+        handleDateRangeChange={handleDateRangeChange}
         isMenuOpen={isMenuOpen}
+        startDate={startDate}
+        endDate={endDate}
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
         onOpenMenu={() => setIsMenuOpen(true)}
         onTitleClick={() => {
           fetchPopular();
           setQuery("");
           setGenreName("");
           setSelectedGenre(null);
+          setStartDate(null);
+          setEndDate(new Date());
         }}
         query={query}
         setQuery={setQuery}
