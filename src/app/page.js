@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   getPopularMovies,
@@ -28,25 +28,31 @@ export default function Home() {
   const [timer, setTimer] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(new Date());
+  const [isUserTyping, setIsUserTyping] = useState(false);
 
+  // 초기 로딩 시에만 실행되는 useEffect
   useEffect(() => {
     fetchGenres();
     fetchPopular();
-    fetchSearch();
   }, []);
 
   useEffect(() => {
+    if (!isUserTyping) return; // 타이핑 중이 아니면 검색X
+
     if (timer) clearTimeout(timer);
+
     const newTimer = setTimeout(() => {
       if (query.trim()) {
         fetchSearch(query);
-      } else if (selectedGenre) {
-        fetchByGenre(selectedGenre);
-      } else {
-        fetchPopular();
       }
+      setIsUserTyping(false); // 타이머 종료 후 타이핑 상태 해제
     }, 400);
+
     setTimer(newTimer);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [query]);
 
   async function fetchGenres() {
@@ -68,7 +74,10 @@ export default function Home() {
     setGenreName("");
   }
 
+  // 수정된 fetchSearch 함수
   async function fetchSearch(q, page = 1) {
+    if (!q || q.trim() === "") return; // 빈 검색어면 검색하지 않음
+
     const data = await searchMovies(q, page);
     setMovies(data.results);
     setTotalPages(data.total_pages);
@@ -85,7 +94,6 @@ export default function Home() {
     if (genre) setGenreName(genre.name);
   }
 
-  // 1
   async function handlePageClick(page) {
     if (query.trim()) {
       fetchSearch(query, page);
@@ -97,6 +105,7 @@ export default function Home() {
       fetchPopular(page);
     }
   }
+
   async function fetchByDateRangeAndGenre(startDate, endDate, page, genreId) {
     const startStr = startDate.toISOString().split("T")[0];
     const endStr = endDate.toISOString().split("T")[0];
@@ -121,11 +130,17 @@ export default function Home() {
     setEndDate(end);
     fetchByDateRangeAndGenre(start, end, currentPage, selectedGenre);
   }
+
+  // query 상태를 업데이트하는 함수
+  const handleQueryChange = (newQuery) => {
+    setQuery(newQuery);
+    setIsUserTyping(true); // 사용자가 타이핑 중임을 표시
+  };
+
   return (
-    //리펙토링 하는중
-    //리펙토링 완
     <div style={{ padding: "2rem" }}>
       <Header
+        fetchSearch={fetchSearch}
         selectedGenre={selectedGenre}
         handleDateRangeChange={handleDateRangeChange}
         isMenuOpen={isMenuOpen}
@@ -143,7 +158,7 @@ export default function Home() {
           setEndDate(new Date());
         }}
         query={query}
-        setQuery={setQuery}
+        setQuery={handleQueryChange} // 수정된 부분
         genreName={genreName}
       />
       {/* Movies */}
@@ -170,4 +185,3 @@ export default function Home() {
     </div>
   );
 }
-// 정렬 옵션?

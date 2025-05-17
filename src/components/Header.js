@@ -1,4 +1,5 @@
 "use client";
+import { useRef, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DateRangePicker from "./DateRangePicker";
 
@@ -12,8 +13,49 @@ export default function Header({
   startDate,
   endDate,
   setStartDate,
+  fetchSearch,
   setEndDate,
 }) {
+  // 포커스가 지맘대로 움직이는 상황 발생
+
+  const searchInputRef = useRef(null);
+
+  // 검색어 변경 핸들러 - 직접 상태 업데이트
+  const handleQueryChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (query.trim()) {
+        fetchSearch(query, 1);
+      }
+      // Enter 키를 누른 후 검색창에서 포커스 제거
+      searchInputRef.current.blur();
+    }
+  };
+
+  // 클릭 이벤트가 발생할 때 자동 포커스를 방지하기 위한 이벤트 리스너
+  useEffect(() => {
+    const handleDocumentClick = (e) => {
+      // 클릭한 요소가 검색 input이 아닌 경우에만 처리
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(e.target)
+      ) {
+        // 다른 요소 클릭 시 검색창 포커스 방지를 위한 로직
+        // 페이지 네이션 누르면 자꾸 올라가서 영화사진 클릭함;;
+      }
+    };
+
+    document.addEventListener("mousedown", handleDocumentClick);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener("mousedown", handleDocumentClick);
+    };
+  }, []);
+
   return (
     <div style={{ padding: "2rem" }}>
       {/* Header */}
@@ -35,7 +77,6 @@ export default function Header({
         style={{
           cursor: "pointer",
           display: "inline-block",
-          cursor: "pointer",
         }}
       >
         Title
@@ -44,10 +85,12 @@ export default function Header({
       {/* Search */}
       <div>
         <input
+          ref={searchInputRef} // ref 연결
           type="text"
           placeholder="영화 제목 검색"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleQueryChange}
+          onKeyDown={handleKeyDown}
           style={{
             padding: "0.5rem",
             width: "300px",

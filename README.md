@@ -56,9 +56,12 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 (완)
 
 2. 연도별 필터링 -> UI는 추가, 기능은 아직 X
+   기능까지
+   (완)
 3. 로그인 기능 추가
    (추후 예정 : 로그인 후 좋아요 버튼 추가해서 볼 수 있도록)
 4. ai 빼고 api의 recomand이용해서 추천 -> 디테일에서
+   (완)
 
 ```
 https://api.themoviedb.org/3/discover/movie?api_key=YOUR_API_KEY&sort_by=release_date.desc&region=KR&primary_release_year=2024&page=1
@@ -68,5 +71,7 @@ https://api.themoviedb.org/3/movie/{movie_id}/recommendations?api_key=YOUR_API_K
 이용해서 추천하기
 slice(0,5) 이용해서 자르기
 ```
+
+(완)
 
 추후 장르별 체크박스로 만들어서 여러개 하기
