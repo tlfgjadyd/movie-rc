@@ -2,6 +2,10 @@
 import { useRef, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import DateRangePicker from "./DateRangePicker";
+import { useAuth } from "./AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function Header({
   onOpenMenu,
@@ -17,6 +21,14 @@ export default function Header({
   setEndDate,
 }) {
   // 포커스가 지맘대로 움직이는 상황 발생
+
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push("/login");
+  };
 
   const searchInputRef = useRef(null);
 
@@ -59,6 +71,26 @@ export default function Header({
   return (
     <div style={{ padding: "2rem" }}>
       {/* Header */}
+      <header
+        style={{
+          padding: "1rem",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <h1 style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
+          Title
+        </h1>
+        {!loading &&
+          (user ? (
+            <button onClick={handleLogout}>로그아웃</button>
+          ) : (
+            <>
+              <button onClick={() => router.push("/login")}>로그인</button>
+              <button onClick={() => router.push("/signup")}>회원가입</button>
+            </>
+          ))}
+      </header>
       <button
         onClick={onOpenMenu}
         style={{
@@ -72,15 +104,6 @@ export default function Header({
       >
         ☰
       </button>
-      <h1
-        onClick={onTitleClick}
-        style={{
-          cursor: "pointer",
-          display: "inline-block",
-        }}
-      >
-        Title
-      </h1>
       <hr />
       {/* Search */}
       <div>

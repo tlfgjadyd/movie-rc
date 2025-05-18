@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   getPopularMovies,
@@ -30,7 +30,7 @@ export default function Home() {
   const [endDate, setEndDate] = useState(new Date());
   const [isUserTyping, setIsUserTyping] = useState(false);
 
-  // 초기 로딩 시에만 실행되는 useEffect
+  // 초기 로딩 시에만 실행
   useEffect(() => {
     fetchGenres();
     fetchPopular();
@@ -44,6 +44,10 @@ export default function Home() {
     const newTimer = setTimeout(() => {
       if (query.trim()) {
         fetchSearch(query);
+      } else if (selectedGenre) {
+        fetchByGenre(selectedGenre);
+      } else {
+        fetchPopular();
       }
       setIsUserTyping(false); // 타이머 종료 후 타이핑 상태 해제
     }, 400);
@@ -74,10 +78,12 @@ export default function Home() {
     setGenreName("");
   }
 
-  // 수정된 fetchSearch 함수
   async function fetchSearch(q, page = 1) {
-    if (!q || q.trim() === "") return; // 빈 검색어면 검색하지 않음
-
+    if (!q || q.trim() === "") {
+      fetchPopular(page);
+      //여긴 왜 못들어오지
+    }
+    console.log(q);
     const data = await searchMovies(q, page);
     setMovies(data.results);
     setTotalPages(data.total_pages);
@@ -131,10 +137,9 @@ export default function Home() {
     fetchByDateRangeAndGenre(start, end, currentPage, selectedGenre);
   }
 
-  // query 상태를 업데이트하는 함수
   const handleQueryChange = (newQuery) => {
     setQuery(newQuery);
-    setIsUserTyping(true); // 사용자가 타이핑 중임을 표시
+    setIsUserTyping(true); // 사용자가 타이핑 중
   };
 
   return (
@@ -158,7 +163,7 @@ export default function Home() {
           setEndDate(new Date());
         }}
         query={query}
-        setQuery={handleQueryChange} // 수정된 부분
+        setQuery={handleQueryChange}
         genreName={genreName}
       />
       {/* Movies */}

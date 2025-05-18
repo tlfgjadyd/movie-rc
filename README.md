@@ -59,6 +59,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
    기능까지
    (완)
 3. 로그인 기능 추가
+   (완)
+   회원가입
+   (완)
+   (로그인안하면 사진클릭시 못들어오게 -> 로그인으로 바꾸기)
    (추후 예정 : 로그인 후 좋아요 버튼 추가해서 볼 수 있도록)
 4. ai 빼고 api의 recomand이용해서 추천 -> 디테일에서
    (완)
@@ -72,6 +76,7 @@ https://api.themoviedb.org/3/movie/{movie_id}/recommendations?api_key=YOUR_API_K
 slice(0,5) 이용해서 자르기
 ```
 
+검색창에 검색하고 지우면 초기화면으로 안돌아가는 문제 발생
 (완)
 
 추후 장르별 체크박스로 만들어서 여러개 하기
