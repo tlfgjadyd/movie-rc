@@ -4,12 +4,24 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import { signInWithGoogle } from "@/lib/firebaseAuth";
 
 export default function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  const handleGoogleLogin = async () => {
+    const { user, error } = await signInWithGoogle();
+    if (error) {
+      //console.error(error.message);
+      alert("로그인 실패: " + error.message);
+    } else {
+      console.log("로그인 성공:", user);
+      router.push("/"); // 로그인 후 홈으로 이동
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -62,6 +74,8 @@ export default function LoginForm() {
         </button>
         {error && <p style={{ color: "red", marginTop: "1rem" }}>{error}</p>}
       </form>
+
+      <button onClick={handleGoogleLogin}>구글로 로그인 / 회원가입</button>
     </div>
   );
 }

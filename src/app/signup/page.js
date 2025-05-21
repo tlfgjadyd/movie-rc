@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signUpWithEmail } from "@/lib/firebaseAuth";
 import { useRouter } from "next/navigation";
+import { signInWithGoogle } from "@/lib/firebaseAuth";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -17,6 +18,17 @@ export default function SignupPage() {
       setErrorMsg(error.message);
     } else {
       router.push("/"); // 회원가입 성공 시 홈으로 이동
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const { user, error } = await signInWithGoogle();
+    if (error) {
+      //console.error(error.message);
+      alert("로그인 실패: " + error.message);
+    } else {
+      console.log("로그인 성공:", user);
+      router.push("/"); // 로그인 후 홈으로 이동
     }
   };
 
@@ -60,6 +72,8 @@ export default function SignupPage() {
         <button type="submit">회원가입</button>
         {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
       </form>
+
+      <button onClick={handleGoogleLogin}>구글로 로그인 / 회원가입</button>
     </div>
   );
 }
