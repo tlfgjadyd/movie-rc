@@ -78,17 +78,20 @@ export default function Header({
           justifyContent: "space-between",
         }}
       >
-        <h1 style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
+        <h1
+          style={{ cursor: "pointer", display: "inline-block" }}
+          onClick={() => router.push("/")}
+        >
           Title
         </h1>
         {!loading &&
           (user ? (
             <button onClick={handleLogout}>로그아웃</button>
           ) : (
-            <>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
               <button onClick={() => router.push("/login")}>로그인</button>
               <button onClick={() => router.push("/signup")}>회원가입</button>
-            </>
+            </div>
           ))}
       </header>
       <button
