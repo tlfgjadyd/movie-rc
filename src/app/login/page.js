@@ -45,7 +45,7 @@ export default function LoginForm() {
         }}
       >
         <h1 style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
-          Title
+          MovLib
         </h1>
       </header>
       <form
@@ -74,8 +74,20 @@ export default function LoginForm() {
         </button>
         {error && <p style={{ color: "red", marginTop: "1rem" }}>{error}</p>}
       </form>
-
-      <button onClick={handleGoogleLogin}>구글로 로그인 / 회원가입</button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{ display: "inline-block", cursor: "pointer" }}
+          onClick={handleGoogleLogin}
+        >
+          구글로 로그인 / 회원가입
+        </div>
+      </div>
     </div>
   );
 }

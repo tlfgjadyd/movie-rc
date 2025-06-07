@@ -42,19 +42,21 @@ export default function SignupPage() {
         }}
       >
         <h1 style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
-          Title
+          MovLib
         </h1>
       </header>
-      <h2>회원가입</h2>
       <form
         onSubmit={handleSignup}
         style={{
+          padding: "2rem",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
-          width: "300px",
+          maxWidth: "400px",
+          margin: "auto",
         }}
       >
+        <h2>회원가입</h2>
         <input
           type="email"
           placeholder="이메일"
@@ -73,7 +75,20 @@ export default function SignupPage() {
         {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
       </form>
 
-      <button onClick={handleGoogleLogin}>구글로 로그인 / 회원가입</button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{ display: "inline-block", cursor: "pointer" }}
+          onClick={handleGoogleLogin}
+        >
+          구글로 로그인 / 회원가입
+        </div>
+      </div>
     </div>
   );
 }

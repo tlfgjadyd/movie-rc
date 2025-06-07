@@ -71,6 +71,7 @@ export default function Header({
   return (
     <div style={{ padding: "2rem" }}>
       {/* Header */}
+      <hr />
       <header
         style={{
           padding: "1rem",
@@ -80,25 +81,58 @@ export default function Header({
       >
         <h1
           style={{ cursor: "pointer", display: "inline-block" }}
-          onClick={() => router.push("/")}
+          onClick={() => {
+            router.push("/");
+            onTitleClick();
+          }}
         >
-          Title
+          MovLib
         </h1>
         {!loading &&
           (user ? (
-            <button onClick={handleLogout}>로그아웃</button>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{ cursor: "pointer", textAlign: "center" }}
+                onClick={handleLogout}
+              >
+                로그아웃
+              </div>
+            </div>
           ) : (
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <button onClick={() => router.push("/login")}>로그인</button>
-              <button onClick={() => router.push("/signup")}>회원가입</button>
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push("/login")}
+              >
+                로그인
+              </div>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push("/signup")}
+              >
+                회원가입
+              </div>
             </div>
           ))}
       </header>
-      <button
+      <div
         onClick={onOpenMenu}
         style={{
           position: "fixed",
-          top: "1rem",
+          top: "0.1rem",
           right: "1rem",
           fontSize: "1.5rem",
           padding: "0.5rem",
@@ -106,7 +140,7 @@ export default function Header({
         }}
       >
         ☰
-      </button>
+      </div>
       <hr />
       {/* Search */}
       <div>
@@ -118,6 +152,7 @@ export default function Header({
           onChange={handleQueryChange}
           onKeyDown={handleKeyDown}
           style={{
+            borderRadius: "20px",
             padding: "0.5rem",
             width: "300px",
             marginTop: "1rem",

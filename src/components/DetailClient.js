@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/useAuth";
 import Link from "next/link";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import styles from "./DetailClient.module.css";
 
 export default function DetailContent({
   movie,
@@ -14,6 +15,7 @@ export default function DetailContent({
 }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [showFullOverview, setShowFullOverview] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -22,77 +24,85 @@ export default function DetailContent({
   }, [loading, user]);
 
   if (loading || !user) {
-    return <p>접근 중... 로그인 상태 확인 중입니다.</p>;
+    return (
+      <div className={styles.loadingContainer}>
+        <p>접근 중... 로그인 상태 확인 중입니다.</p>
+      </div>
+    );
   }
 
+  const truncateText = (text, maxLength = 200) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
+  const shouldTruncate = movie.overview && movie.overview.length > 200;
+
   return (
-    <div style={{ padding: "2rem" }}>
-      <Link href={"/"}>
-        <button
-          style={{
-            float: "right",
-            background: "none",
-            color: "white",
-            fontSize: "1.5rem",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          X
-        </button>
+    <div className={styles.detailContainer}>
+      <Link href={"/"} className={styles.closeButton}>
+        ✕
       </Link>
 
       {/* 현재 영화 정보 */}
-      <div className="current-movie">
-        <h1>{movie.title}</h1>
-        <div style={{ display: "flex", gap: "20px" }}>
-          <img
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
-            style={{ width: "300px", height: "auto" }}
-          />
-          <div style={{ width: 90, height: "auto" }}>
+      <div className={styles.currentMovie}>
+        <h1 className={styles.movieTitle}>{movie.title}</h1>
+
+        <div className={styles.movieInfo}>
+          <div className={styles.posterContainer}>
+            <img
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+              className={styles.moviePoster}
+            />
+          </div>
+
+          <div className={styles.ratingContainer}>
             <CircularProgressbar
               value={movie.vote_average * 10}
-              text={`${movie.vote_average * 10}%`}
+              text={`${Math.round(movie.vote_average * 10)}%`}
               styles={buildStyles({
-                textSize: "24px",
-                pathColor: movie.vote_average >= 7 ? "#21d07a" : "#d2d531", // 높은 평점은 초록, 낮은 평점은 노랑
+                textSize: "18px",
+                pathColor: movie.vote_average >= 7 ? "#21d07a" : "#d2d531",
                 textColor: "#fff",
                 trailColor: "#204529",
                 backgroundColor: "#081c22",
               })}
             />
+            <p className={styles.ratingLabel}>사용자 평점</p>
           </div>
 
-          <div>
-            <p>{movie.overview}</p>
-            <p>{/* <strong>평점:</strong> {movie.vote_average} */}</p>
+          <div className={styles.overviewContainer}>
+            <h3>줄거리</h3>
+            <p className={styles.overviewText}>
+              {shouldTruncate && !showFullOverview
+                ? truncateText(movie.overview)
+                : movie.overview}
+            </p>
+            {shouldTruncate && (
+              <button
+                className={styles.moreButton}
+                onClick={() => setShowFullOverview(!showFullOverview)}
+              >
+                {showFullOverview ? "접기" : "더보기"}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* 추천 영화 */}
-      <div className="recommended-movies" style={{ marginTop: "40px" }}>
-        <h2>추천 영화</h2>
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            overflowX: "auto",
-            padding: "10px 0",
-          }}
-        >
+      <section className={styles.movieSection}>
+        <h2 className={styles.sectionTitle}>추천 영화</h2>
+        <div className={styles.movieGrid}>
           {recommendMovies.length > 0 ? (
             recommendMovies.map((movie) => (
-              <Link href={`/detail/${movie.id}`} key={movie.id}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    textAlign: "center",
-                    width: "180px",
-                  }}
-                >
+              <Link
+                href={`/detail/${movie.id}`}
+                key={movie.id}
+                className={styles.movieCard}
+              >
+                <div className={styles.movieItem}>
                   <img
                     src={
                       movie.poster_path
@@ -100,46 +110,30 @@ export default function DetailContent({
                         : "/placeholder-poster.png"
                     }
                     alt={movie.title}
-                    style={{
-                      width: "100%",
-                      borderRadius: "8px",
-                      height: "270px",
-                      objectFit: "cover",
-                    }}
+                    className={styles.movieThumbnail}
                   />
-                  <p style={{ fontSize: "14px", marginTop: "8px" }}>
-                    {movie.title}
-                  </p>
+                  <p className={styles.movieCardTitle}>{movie.title}</p>
                 </div>
               </Link>
             ))
           ) : (
-            <p>추천 영화가 없습니다.</p>
+            <p className={styles.noMovies}>추천 영화가 없습니다.</p>
           )}
         </div>
-      </div>
+      </section>
 
       {/* 비슷한 영화 */}
-      <div className="similar-movies" style={{ marginTop: "40px" }}>
-        <h2>비슷한 영화</h2>
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            overflowX: "auto",
-            padding: "10px 0",
-          }}
-        >
+      <section className={styles.movieSection}>
+        <h2 className={styles.sectionTitle}>비슷한 영화</h2>
+        <div className={styles.movieGrid}>
           {similarMovies.length > 0 ? (
             similarMovies.map((movie) => (
-              <Link href={`/detail/${movie.id}`} key={movie.id}>
-                <div
-                  style={{
-                    cursor: "pointer",
-                    textAlign: "center",
-                    width: "180px",
-                  }}
-                >
+              <Link
+                href={`/detail/${movie.id}`}
+                key={movie.id}
+                className={styles.movieCard}
+              >
+                <div className={styles.movieItem}>
                   <img
                     src={
                       movie.poster_path
@@ -147,24 +141,17 @@ export default function DetailContent({
                         : "/placeholder-poster.png"
                     }
                     alt={movie.title}
-                    style={{
-                      width: "100%",
-                      borderRadius: "8px",
-                      height: "270px",
-                      objectFit: "cover",
-                    }}
+                    className={styles.movieThumbnail}
                   />
-                  <p style={{ fontSize: "14px", marginTop: "8px" }}>
-                    {movie.title}
-                  </p>
+                  <p className={styles.movieCardTitle}>{movie.title}</p>
                 </div>
               </Link>
             ))
           ) : (
-            <p>비슷한 영화가 없습니다.</p>
+            <p className={styles.noMovies}>비슷한 영화가 없습니다.</p>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

@@ -6,7 +6,6 @@ export async function getPopularMovies(page) {
     `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=ko-KR&page=${page}`
   );
   const data = await res.json();
-  //console.log("test" + API_KEY);
   return {
     results: data.results,
     total_pages: data.total_pages,
